@@ -1,0 +1,20 @@
+Tipo,Concepto,Fórmula,Variable,Nombre,Descripción
+Microeconomía,Elasticidad Precio de la Demanda,E_pd = (% Cambio en Q_d) / (% Cambio en P),E_pd,Elasticidad Precio de la Demanda,Mide la sensibilidad de la cantidad demandada al precio.
+Microeconomía,Ingreso Total,IT = P * Q,IT,Ingreso Total,Ingreso obtenido por la venta de la cantidad Q al precio P.
+Microeconomía,Beneficio / Ganancia,PI = IT - CT,PI,Beneficio,Diferencia entre Ingreso Total y Costo Total.
+Microeconomía,Costo Marginal,CMg = Cambio en CT / Cambio en Q,CMg,Costo Marginal,Costo de producir una unidad adicional.
+Microeconomía,Costo Total Medio,CTMe = CT / Q,CTMe,Costo Total Medio,Costo promedio por unidad producida.
+Microeconomía,Maximización de Beneficio,IMg = CMg,IMg,Ingreso Marginal,Ingreso adicional por vender una unidad más.
+Macroeconomía,PIB (Gasto),PIB = C + I + G + (X - M),C,Consumo,Gasto de los hogares en bienes y servicios.
+Macroeconomía,PIB (Gasto),PIB = C + I + G + (X - M),I,Inversión,Gasto en bienes de capital, inventarios y estructuras.
+Macroeconomía,PIB (Gasto),PIB = C + I + G + (X - M),G,Gasto Público,Compras de bienes y servicios por el gobierno.
+Macroeconomía,PIB (Gasto),PIB = C + I + G + (X - M),(X - M),Exportaciones Netas,Exportaciones menos Importaciones.
+Macroeconomía,PIB Real,PIB Real = (PIB Nominal / Deflactor del PIB) * 100,PIB Nominal,Producto Interno Bruto Nominal,Valor de la producción a precios corrientes.
+Macroeconomía,Tasa de Crecimiento del PIB,Tasa Crecimiento = ((PIB_Final - PIB_Inicial) / PIB_Inicial) * 100,PIB_Final,PIB del periodo actual,Valor del PIB en el periodo de medición.
+Macroeconomía,Deflactor del PIB (Nivel de Precios),Deflactor = (PIB Nominal / PIB Real) * 100,Deflactor,Deflactor del PIB,Medida del nivel general de precios de la producción.
+Macroeconomía,Tasa de Inflación,Tasa Inflación = ((IPC_Final - IPC_Inicial) / IPC_Inicial) * 100,IPC_Final,Índice de Precios al Consumidor Final,Valor del IPC en el periodo actual.
+Macroeconomía,Tasa de Desempleo,Tasa Desempleo = (Desempleados / PEA) * 100,PEA,Población Económicamente Activa,Suma de Empleados y Desempleados.
+Finanzas,Interés Compuesto,C_n = C_0 * (1 + i)**n,C_n,Capital Final o Monto,"El valor total al final de la inversión o préstamo, es decir, el capital inicial más todos los intereses generados."
+Finanzas,Interés Compuesto,C_n = C_0 * (1 + i)**n,C_0,Capital Inicial o Principal,La cantidad de dinero invertida o prestada al comienzo de la operación.
+Finanzas,Interés Compuesto,C_n = C_0 * (1 + i)**n,i,"Tasa de Interés por período","La tasa de interés aplicada, expresada en formato decimal (ej. 5% se escribe como 0.05). Debe estar ajustada al período de capitalización."
+Finanzas,Interés Compuesto,C_n = C_0 * (1 + i)**n,n,Número de Períodos,La cantidad total de veces que el interés se capitaliza (se suma al capital).
