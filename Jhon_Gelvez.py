@@ -19,6 +19,74 @@
 
 separator = "-------------------------------"
 
+def get_float_input(prompt_message):
+    while True:
+        try:
+            raw_input = input(prompt_message + ": ").strip()
+            if raw_input == "":
+                print(separator)
+                print("❌ ¡Entrada inválida! No ingresaste nada.")
+                print(separator)
+                continue
+
+            # eliminar espacios internos
+            raw = raw_input.replace(" ", "")
+
+            # contar separadores
+            dots = raw.count('.')
+            commas = raw.count(',')
+
+            sanitized = raw
+
+            # Caso: hay tanto puntos como comas -> decidir por la posición del último separador
+            if dots > 0 and commas > 0:
+                # si la última coma está después del último punto: coma = decimal (ej: 1.000,50)
+                if raw.rfind(',') > raw.rfind('.'):
+                    sanitized = raw.replace('.', '')        # quitar miles
+                    sanitized = sanitized.replace(',', '.') # coma -> punto decimal
+                else:
+                    # si el último punto está después: punto = decimal (ej: 1,000.50)
+                    sanitized = raw.replace(',', '')        # quitar comas miles
+                    # punto ya está como decimal
+            else:
+                # Solo puntos
+                if dots > 1 and commas == 0:
+                    # probablemente puntos como separador de miles: 1.000.000 -> 1000000
+                    sanitized = raw.replace('.', '')
+                # Solo comas
+                elif commas > 1 and dots == 0:
+                    # probablemente comas como separador de miles: 1,000,000 -> 1000000
+                    sanitized = raw.replace(',', '')
+                # Un único separador (o ninguno): si es una coma asumimos decimal (ej: 1000,50)
+                elif commas == 1 and dots == 0:
+                    sanitized = raw.replace(',', '.')
+                # caso: un solo punto y ninguna coma -> puede ser decimal o miles (1000.50 o 1000)
+                # lo dejamos como está (float aceptará 1000.50). Si es "1.000" y significa 1000,
+                # esto podría interpretarse como 1.0 en algunos locales; para evitar ambigüedad
+                # tratamos "1.000" como 1000 (si después del punto hay exactamente 3 dígitos)
+                elif dots == 1 and commas == 0:
+                    part_after = raw.split('.')[-1]
+                    if len(part_after) == 3 and part_after.isdigit():
+                        # 1.000 -> 1000
+                        sanitized = raw.replace('.', '')
+                    # else: dejamos el punto como decimal (ej: 1000.50)
+
+            # intento de conversión
+            valor = float(sanitized)
+
+            if valor < 0:
+                print(separator)
+                print("❌ ¡Entrada inválida! Por favor, ingrese un número no negativo.")
+                print(separator)
+                continue
+
+            return valor
+
+        except ValueError:
+            print(separator)
+            print("❌ ¡Entrada inválida! Por favor, ingrese un número válido.")
+            print(separator)
+
 
 def get_numeric_input(prompt_message):
     while True:
@@ -53,11 +121,11 @@ def compund_interest():
 
     print(separator)
     
-    initial_capital = get_numeric_input("Ingrese el capital inicial")
+    initial_capital = get_float_input("Ingrese el capital inicial")
 
-    periodic_contribution = get_numeric_input("Contribucion mensual")
+    periodic_contribution = get_float_input("Contribucion mensual")
 
-    number_period = get_numeric_input("Cantidad de tiempo")
+    number_period = get_float_input("Cantidad de tiempo")
     # periodo de tiempo
     while True:
 
@@ -78,18 +146,18 @@ def compund_interest():
         else:
             print("El valor no es un numero")
 
-    nominal_annual_interest = get_numeric_input("Tasa de interes estimada (valor entero)") / 100
+    nominal_annual_interest = get_float_input("Tasa de interes estimada (valor entero)") / 100
 
     #fecuencia de capitalizacion
     while True:
         try:
             # capitalization_frequency = get_numeric_input("Ingrese la frecuencia de capitalización ")
-            option_frecuenci = input("Ingrese la frecuencia de capitalización\n1:anualmente\n2:semestralmente\n3:trimestralmete\n4:mensualmente\n5:diariamente")
+            option_frecuency = int(input("Ingrese la frecuencia de capitalización\n1:anualmente\n2:semestralmente\n3:trimestralmete\n4:mensualmente\n5:diariamente\n"))
 
-            if type(option_frecuenci) == int:
+            if type(option_frecuency) != int:
                 raise ValueError("Valor invalido. Ingrese un numero")
 
-            match option_frecuenci:
+            match option_frecuency:
                 case 1:
                     capitalization_frequency = 1
                     break # Opción válida, salimos del bucle
@@ -110,7 +178,8 @@ def compund_interest():
                     print(separator)
                     print("❌ Opción inválida. El número debe estar entre 1 y 5.")
                     print(separator)               
-        except:
+        except ValueError as e:
+            print(e)
             pass
 
     # Fórmula CORRECTA para el capital inicial
@@ -128,12 +197,34 @@ def compund_interest():
     #total generado de interes
     total_interest = total_compound_interest - total_contributed
 
-    print(f"El total del ahorro en {number_period} es: {total_compound_interest}")
+    print(f"El total del ahorro en {number_period:.0f} es: {total_compound_interest}")
     print(f"Total aportado: {total_contributed}")
-    print(f"El interes total generado (- tus ahorros): {total_interest}")
+    print(f"El interes total generado ( - tus ahorros): {total_interest:.2f}")
+    print(separator)
+    print("Informacion detallada")
+    detalied_info = {
+        "Inversion inicial" : initial_capital,
+        "Contribucion mensual" : periodic_contribution,
+        "Cantidad de tiempo" : time_period,
+        "Tasa de interes" : nominal_annual_interest,
+        "Frecuencia de capitalizacion" : capitalization_frequency,
+        "Total generado"  : total_compound_interest,
+        "Total ahorrado (inicial + regular)" : total_contributed,
+        "Total generado de intereses" : total_interest
+    }
+    print(detalied_info)
+    print(separator)
+
+    if input("Desea calcular otro valor (s/n)") == "n":
+        return detalied_info
+    else:
+        return main()
+
         
 def main():
     compund_interest()
 
 if __name__ == "__main__":
     main()
+
+#diccionario con los valores ingresados e incluir listas
