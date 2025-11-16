@@ -71,3 +71,18 @@ Al final, el programa te preguntará si quieres hacer otro cálculo:
 "s" para calcular otro escenario
 
 "n" para salir del programa
+
+Ejemplo de uso
+Supongamos que quieres calcular:
+
+Capital inicial: $1,000
+
+Contribución mensual: $100
+
+Tiempo: 5 años
+
+Tasa de interés: 6% anual
+
+Capitalización: mensual
+
+El programa calculará cuánto tendrás después de 5 años, cuánto aportaste tú y cuánto ganaste en intereses.
