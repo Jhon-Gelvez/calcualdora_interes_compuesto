@@ -51,12 +51,38 @@ def get_float_input(prompt_message):
             else:
                 # Solo puntos
                 if dots > 1 and commas == 0:
-                    # probablemente puntos como separador de miles: 1.000.000 -> 1000000 !!que pasa si es 1.000.35
-                    sanitized = raw.replace('.', '')
+                    # Encontrar el último punto
+                    last_dot_pos = raw.rfind('.')
+                    part_after_last_dot = raw[last_dot_pos + 1:]
+    
+                    # Si después del último punto hay menos de 3 números -> es decimal
+                    if len(part_after_last_dot) < 3 and part_after_last_dot.isdigit():
+                        # Ejemplo: "1.000.000.50" -> los primeros puntos son miles, el último es decimal
+                        # Quitamos todos los puntos excepto el último
+                        before_last_dot = raw[:last_dot_pos].replace('.', '')
+                        after_last_dot = raw[last_dot_pos + 1:]
+                        sanitized = before_last_dot + '.' + after_last_dot
+                    else:
+                        # Todos los puntos son para miles: "1.000.000" -> "1000000"
+                        sanitized = raw.replace('.', '')
+                   
                 # Solo comas
                 elif commas > 1 and dots == 0:
-                    # probablemente comas como separador de miles: 1,000,000 -> 1000000
-                    sanitized = raw.replace(',', '')
+                     # Encontrar la última coma
+                    last_comma_pos = raw.rfind(',')
+                    part_after_last_comma = raw[last_comma_pos + 1:]
+    
+                    # Si después del último coma hay menos de 3 números -> es decimal
+                    if len(part_after_last_comma) < 3 and part_after_last_comma.isdigit():
+                        # Ejemplo: "1,000,000,50" -> los primeros comas son miles, el último es decimal
+                        # Quitamos todos los comas excepto el último
+                        before_last_comma = raw[:last_comma_pos].replace(',', '')
+                        after_last_comma = raw[last_comma_pos + 1:]
+                        sanitized = before_last_comma + ',' + after_last_comma
+                    else:
+                        # Todos los comas son para miles: "1,000,000" -> "1000000"
+                        sanitized = raw.replace('.', '')
+                   
                 # Un único separador (o ninguno): si es una coma asumimos decimal (ej: 1000,50)
                 elif commas == 1 and dots == 0:
                     part_after = raw.split('.')[-1]
