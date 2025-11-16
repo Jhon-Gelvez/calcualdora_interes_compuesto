@@ -19,6 +19,8 @@
 
 separator = "-------------------------------"
 
+values_user = list()
+
 def get_float_input(prompt_message):
     while True:
         try:
@@ -242,13 +244,36 @@ def compund_interest():
     }
     print(detalied_info)
     print(separator)
-
+    save_value(total_compound_interest)
+    print_values_calculated()
+    
     if input("Desea calcular otro valor (s/n)") == "n":
         return detalied_info
     else:
         return main()
 
-        
+def save_value(value):
+    print("desea guardar el valor? 's/n'")
+    aswer = input("")
+    if answer == "s":
+        values_user.append(value)
+    elif answer == "n":
+        pass
+    else:
+        print("valor no esperado ingrese s/n")
+        save_value(value)
+
+def print_values_calculated():
+    answer = input("¿Desea ver los valores guardados? s/n: ")
+    if answer == "s":
+        print("\nValores guardados:")
+        for i, valor in enumerate(values_user, 1):
+            print(f"{i}: {valor}")
+    elif answer == "n":
+        pass
+    else:
+        print("Valor no esperado, ingrese s/n")
+        print_values_calculated()
 def main():
     compund_interest()
 
