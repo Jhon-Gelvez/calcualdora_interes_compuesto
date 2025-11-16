@@ -25,7 +25,7 @@ def get_float_input(prompt_message):
             raw_input = input(prompt_message + ": ").strip()
             if raw_input == "":
                 print(separator)
-                print("❌ ¡Entrada inválida! No ingresaste nada.")
+                print("Ingrese un numero.")
                 print(separator)
                 continue
 
@@ -51,7 +51,7 @@ def get_float_input(prompt_message):
             else:
                 # Solo puntos
                 if dots > 1 and commas == 0:
-                    # probablemente puntos como separador de miles: 1.000.000 -> 1000000
+                    # probablemente puntos como separador de miles: 1.000.000 -> 1000000 !!que pasa si es 1.000.35
                     sanitized = raw.replace('.', '')
                 # Solo comas
                 elif commas > 1 and dots == 0:
@@ -76,7 +76,7 @@ def get_float_input(prompt_message):
 
             if valor < 0:
                 print(separator)
-                print("❌ ¡Entrada inválida! Por favor, ingrese un número no negativo.")
+                print("¡Entrada inválida! Por favor, ingrese un número no negativo.")
                 print(separator)
                 continue
 
@@ -84,11 +84,11 @@ def get_float_input(prompt_message):
 
         except ValueError:
             print(separator)
-            print("❌ ¡Entrada inválida! Por favor, ingrese un número válido.")
+            print("¡Entrada inválida! Por favor, ingrese un número válido.")
             print(separator)
 
 
-def get_numeric_input(prompt_message):
+def get_int_input(prompt_message):
     while True:
         try:
             # 1. Obtener la entrada del usuario como una cadena de texto (str)
@@ -113,7 +113,7 @@ def get_numeric_input(prompt_message):
         except ValueError:
             # Si la conversión falla (porque quedó una cadena vacía o tiene letras, etc.)
             print(separator)
-            print("❌ ¡Entrada inválida! Por favor, ingrese un número entero válido (solo dígitos).")
+            print("¡Entrada inválida! Por favor, ingrese un número entero válido (solo dígitos).")
             print(separator)
 
 def compund_interest():
@@ -121,15 +121,15 @@ def compund_interest():
 
     print(separator)
     
-    initial_capital = get_float_input("Ingrese el capital inicial")
+    initial_capital = get_int_input("Ingrese el capital inicial")
 
-    periodic_contribution = get_float_input("Contribucion mensual")
+    periodic_contribution = get_int_input("Contribucion mensual")
 
     number_period = get_float_input("Cantidad de tiempo")
     # periodo de tiempo
     while True:
 
-        time_period = get_numeric_input("El tiempo esta en\n1: años\n2:meses\n")
+        time_period = get_int_input("El tiempo esta en\n1: años\n2:meses\n")
 
         if time_period == 1:
 
@@ -146,12 +146,12 @@ def compund_interest():
         else:
             print("El valor no es un numero")
 
-    nominal_annual_interest = get_float_input("Tasa de interes estimada (valor entero)") / 100
+    nominal_annual_interest = get_float_input("Tasa de interes estimada: ") / 100
 
     #fecuencia de capitalizacion
     while True:
         try:
-            # capitalization_frequency = get_numeric_input("Ingrese la frecuencia de capitalización ")
+            # capitalization_frequency = get_int_input("Ingrese la frecuencia de capitalización ")
             option_frecuency = int(input("Ingrese la frecuencia de capitalización\n1:anualmente\n2:semestralmente\n3:trimestralmete\n4:mensualmente\n5:diariamente\n"))
 
             if type(option_frecuency) != int:
@@ -176,7 +176,7 @@ def compund_interest():
                 case _:
                     # Esto se activa si el usuario ingresa 6, 7, 0, etc.
                     print(separator)
-                    print("❌ Opción inválida. El número debe estar entre 1 y 5.")
+                    print("Opción inválida. El número debe estar entre 1 y 5.")
                     print(separator)               
         except ValueError as e:
             print(e)
