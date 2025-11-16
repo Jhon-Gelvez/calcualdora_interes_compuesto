@@ -59,7 +59,9 @@ def get_float_input(prompt_message):
                     sanitized = raw.replace(',', '')
                 # Un único separador (o ninguno): si es una coma asumimos decimal (ej: 1000,50)
                 elif commas == 1 and dots == 0:
-                    sanitized = raw.replace(',', '.')
+                    part_after = raw.split('.')[-1]
+                     if len(part_after) == 3 and part_after.isdigit():
+                         sanitized = raw.replace(',', '')
                 # caso: un solo punto y ninguna coma -> puede ser decimal o miles (1000.50 o 1000)
                 # lo dejamos como está (float aceptará 1000.50). Si es "1.000" y significa 1000,
                 # esto podría interpretarse como 1.0 en algunos locales; para evitar ambigüedad
