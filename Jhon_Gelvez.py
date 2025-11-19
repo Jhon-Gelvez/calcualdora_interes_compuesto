@@ -8,100 +8,54 @@ separator = "-------------------------------"
 values_user = list()
 
 # -----------------------------------------------------------
-# Función: format_currency
-# Convierte un número a formato monetario colombiano (COP).
+# Función: get_int_input
+# Solicita un entero. Si ingresan decimales, toma solo la parte entera.
 # -----------------------------------------------------------
-def format_currency(value):
-    tmp = "{:,.2f}".format(value)
-    tmp = tmp.replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"COP {tmp}"
-
-
+def get_int_input(prompt_message: str):
+    while True:
+        try:
+            prompt_message = input(prompt_message).strip()
+            prompt_message = prompt_message.replace(".", "")
+            prompt_message = prompt_message.replace(",", "")
+            prompt_message = int(prompt_message)
+            return prompt_message
+            
+        except ValueError:
+            print(separator)
+            print("¡Entrada inválida! Por favor, ingrese un número entero válido (solo dígitos).")
+            print(separator)
+            
 # -----------------------------------------------------------
 # Función: get_float_input
 # Solicita un número flotante permitiendo formatos con puntos,
 # comas y miles. Limpia y normaliza el número antes de convertirlo.
 # -----------------------------------------------------------
-def get_float_input(prompt_message):
+# -----------------------------------------------------------
+# Función: get_float_input (CORREGIDA)
+# Solicita un número flotante. Asume coma (,) como separador decimal
+# y punto (.) como separador de miles.
+# -----------------------------------------------------------
+def get_float_input(prompt_message: str):
     while True:
+        user_input = input(prompt_message).strip()
+        
         try:
-            raw_input_value = input(prompt_message).strip()
-            if raw_input_value == "":
-                print(separator)
-                print("Ingrese un numero.")
-                print(separator)
-                continue
-
-            raw = raw_input_value.replace(" ", "")
-            dots = raw.count('.')
-            commas = raw.count(',')
-
-            sanitized = raw
-
-            if dots > 0 and commas > 0:
-                if raw.rfind(',') > raw.rfind('.'):
-                    sanitized = raw.replace('.', '')
-                    sanitized = sanitized.replace(',', '.')
-                else:
-                    sanitized = raw.replace(',', '')
-            else:
-                if dots > 1 and commas == 0:
-                    last_dot_pos = raw.rfind('.')
-                    part_after = raw[last_dot_pos + 1:]
-                    if len(part_after) < 3 and part_after.isdigit():
-                        sanitized = raw[:last_dot_pos].replace('.', '') + '.' + part_after
-                    else:
-                        sanitized = raw.replace('.', '')
-                elif commas > 1 and dots == 0:
-                    last_comma_pos = raw.rfind(',')
-                    part_after = raw[last_comma_pos + 1:]
-                    if len(part_after) < 3 and part_after.isdigit():
-                        sanitized = raw[:last_comma_pos].replace(',', '') + ',' + part_after
-                    else:
-                        sanitized = raw.replace(',', '')
-                elif commas == 1 and dots == 0:
-                    part_after = raw.split(',')[-1]
-                    if len(part_after) == 3 and part_after.isdigit():
-                        sanitized = raw.replace(',', '')
-                elif dots == 1 and commas == 0:
-                    part_after = raw.split('.')[-1]
-                    if len(part_after) == 3 and part_after.isdigit():
-                        sanitized = raw.replace('.', '')
-
-            valor = float(sanitized)
-
-            if valor < 0:
-                print(separator)
-                print("¡Entrada inválida! Por favor, ingrese un número no negativo.")
-                print(separator)
-                continue
-
-            return valor
-
+            # 1. Limpiar separador de miles (PUNTO)
+            # Ejemplo: '1.000.000,50' -> '1000000,50'
+            clean_input = user_input.replace(".", "")
+            
+            # 2. Reemplazar separador decimal regional (COMA) por el estándar de Python (PUNTO)
+            # Ejemplo: '1000000,50' -> '1000000.50'
+            clean_input = clean_input.replace(",", ".")
+            
+            # 3. Intentar convertir a float
+            number = float(clean_input)
+            return number
+            
         except ValueError:
             print(separator)
-            print("¡Entrada inválida! Por favor, ingrese un número válido.")
+            print("¡Entrada inválida! Por favor, ingrese un número válido (ej: 12.5 o 12,5 para decimales; use puntos para miles, ej: 1.000.000).")
             print(separator)
-
-
-# -----------------------------------------------------------
-# Función: get_int_input
-# Solicita un entero. Si ingresan decimales, toma solo la parte entera.
-# -----------------------------------------------------------
-def get_int_input(prompt_message):
-    while True:
-        try:
-            raw_input_value = input(prompt_message)
-            sanitized_input = raw_input_value.replace(",", ".")
-            if "." in sanitized_input:
-                sanitized_input = sanitized_input.split(".")[0]
-            valor = int(sanitized_input)
-            return valor
-        except ValueError:
-            print(separator)
-            print("¡Entrada inválida! Por favor, ingrese un número entero válido (solo dígitos).")
-            print(separator)
-
 
 # -----------------------------------------------------------
 # Función: compund_interest
@@ -112,14 +66,30 @@ def compund_interest():
     print("Interes compuesto")
     print(separator)
 
-    initial_capital = get_int_input("Ingrese el capital inicial: ")
-    periodic_contribution = get_int_input("Contribucion mensual: ")
-    number_period = get_float_input("Cantidad de tiempo: ")
-
-    original_number_period = number_period  # Guardar unidad real ingresada
+    # Textos mejorados para indicar al usuario cómo debe escribir números
+    initial_capital = get_int_input("Ingrese el capital inicial (solo números separados por punto): ")
+    periodic_contribution = get_int_input("Contribucion mensual (solo números separados por punto): ")
 
     while True:
-        time_period = get_int_input("El tiempo esta en\n1: años\n2: meses\n")
+        while True:
+            time_period = get_int_input(
+                "La unidad de tiempo sera\n"
+                "1: años\n"
+                "2: meses\n"
+            )
+            
+            if  time_period == 1 or  time_period == 2:
+                break
+            else:
+                # Si el número es válido (ej. 3) pero fuera de rango, muestra el error y repite el bucle INTERNO
+                print(separator)
+                print(f"¡Opción inválida! La unidad de tiempo debe ser 1 (años) o 2 (meses), no '{time_period}'.")
+                print(separator)
+                
+        number_period = get_float_input("Cantidad de tiempo (puede usar 12, 12.5, 44.6): ")
+
+        original_number_period = number_period
+        
         if time_period == 1:
             time_unit_str = "años"
             break
@@ -128,19 +98,47 @@ def compund_interest():
             time_unit_str = "meses"
             break
         else:
-            print("El valor no es un numero")
+            print(f"El valor {time_period} no es un numero, ingrese 1 o 2")
 
-    nominal_annual_interest = get_float_input("Tasa de interes estimada (%): ") / 100
+    nominal_annual_interest = get_float_input(
+        "Tasa de interes estimada (%) (ej: 12, 12.5, 0.5): "
+    ) / 100
 
     while True:
         try:
-            option_frecuency = int(input("Ingrese la frecuencia de capitalización\n1:anualmente\n2:semestralmente\n3:trimestralmete\n4:mensualmente\n5:diariamente\n"))
+            option_frecuency = int(input(
+                "Ingrese la frecuencia de capitalización\n"
+                "1: anualmente\n"
+                "2: semestralmente\n"
+                "3: trimestralmente\n"
+                "4: mensualmente\n"
+                "5: diariamente\n"
+            ))
+            
+            # definimos una variable para describir la frecuencia
+            frequency_name = ""
+            
             match option_frecuency:
-                case 1: capitalization_frequency = 1; break
-                case 2: capitalization_frequency = 2; break
-                case 3: capitalization_frequency = 4; break
-                case 4: capitalization_frequency = 12; break
-                case 5: capitalization_frequency = 365; break
+                case 1: 
+                    capitalization_frequency = 1
+                    frequency_name = "1 vez al año (Anual)" # LOG MEJORADO
+                    break
+                case 2: 
+                    capitalization_frequency = 2
+                    frequency_name = "2 veces al año (Semestral)" # LOG MEJORADO
+                    break
+                case 3: 
+                    capitalization_frequency = 4
+                    frequency_name = "4 veces al año (Trimestral)" # LOG MEJORADO
+                    break
+                case 4: 
+                    capitalization_frequency = 12
+                    frequency_name = "12 veces al año (Mensual)" # LOG MEJORADO
+                    break
+                case 5: 
+                    capitalization_frequency = 365
+                    frequency_name = "365 veces al año (Diaria)" # LOG MEJORADO
+                    break
                 case _:
                     print(separator)
                     print("Opción inválida. El número debe estar entre 1 y 5.")
@@ -169,14 +167,14 @@ def compund_interest():
     print(separator)
     print("Informacion detallada")
     detalied_info = {
-        "Inversion inicial": format_currency(initial_capital),
-        "Contribucion mensual": format_currency(periodic_contribution),
+        "Inversion inicial": initial_capital,
+        "Contribucion mensual": periodic_contribution,
         "Cantidad de tiempo": f"{original_number_period} {time_unit_str}",
         "Tasa de interes": f"{nominal_annual_interest * 100}%",
-        "Frecuencia de capitalizacion": capitalization_frequency,
-        "Total ahorrado (inicial + regular)": format_currency(round(total_contributed, 2)),
-        "Total generado de intereses": format_currency(round(total_interest, 2)),
-        "Total generado": format_currency(total_compound_interest)
+        "Frecuencia de capitalizacion": frequency_name,
+        "Total ahorrado (inicial + regular)": round(total_contributed, 2),
+        "Total generado de intereses": round(total_interest, 2),
+        "Total generado": total_compound_interest
     }
     print(json.dumps(detalied_info, indent=4, ensure_ascii=False))
     print(separator)
@@ -186,11 +184,7 @@ def compund_interest():
 
 # -----------------------------------------------------------
 # Función: option_menu
-# Menú principal que permite:
-# 1. Calcular interés compuesto
-# 2. Guardar el último valor generado
-# 3. Ver valores guardados
-# 4. Salir
+# Menú principal actualizado con instrucciones claras.
 # -----------------------------------------------------------
 def option_menu():
     ultimo_valor = None
@@ -199,9 +193,10 @@ def option_menu():
         print("\nMENU PRINCIPAL")
         print(separator)
         print("1. Calcular nuevo interes compuesto")
+        print("   (Debe ingresar números limpios: 1000 o 1.000)")
 
         if ultimo_valor is not None:
-            print("2. Guardar ultimo valor generado (" + format_currency(ultimo_valor) + ")")
+            print("2. Guardar ultimo valor generado (" + str(ultimo_valor) + ")")
         else:
             print("2. Guardar (No disponible - Calcule primero)")
 
@@ -227,7 +222,7 @@ def option_menu():
             if not values_user:
                 print("No hay valores guardados.")
             for i, valor in enumerate(values_user, 1):
-                print(f"{i}: {format_currency(valor)}")
+                print(f"{i}: {valor}")
             input("Presione Enter para continuar...")
 
         elif opcion == "4":

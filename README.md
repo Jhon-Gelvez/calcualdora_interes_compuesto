@@ -1,3 +1,7 @@
+# mejorar el log de tiempo primero unidad de medida
+# mostrar ultimo el total generado
+# 
+
 Descripción del proyecto
 
 Este es un programa CLI (Command Line Interface) diseñado para calcular interés compuesto de forma rápida, clara y sin depender de herramientas web limitadas o de pago. Lo hice porque, al necesitar calcularlo, descubrí que casi no había opciones gratuitas que fueran prácticas y completas. Así que desarrollé una herramienta ligera, intuitiva y útil para cualquiera que quiera entender mejor cómo crece su dinero.
