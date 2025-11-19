@@ -1,21 +1,5 @@
-#calculadora interes compuesto Cde n = C de o * (1+ i )**n
-# Variable,Nombre,Descripción
-# Cn​,Capital Final o Monto,"El valor total al final de la inversión o préstamo, es decir, el capital inicial más todos los intereses generados."
-# C0​,Capital Inicial o Principal,La cantidad de dinero invertida o prestada al comienzo de la operación.
-# i,Tasa de Interés por período,"La tasa de interés aplicada, expresada en formato decimal (ej. 5% se escribe como 0.05). Debe estar ajustada al período de capitalización (ver nota abajo)."
-# n,Número de Períodos,La cantidad total de veces que el interés se capitaliza (se suma al capital).
-
-# entrada de datos por el usuario 
-# aporte_inicial 
-# aporte_adicional #valor mensual o anual 
-# tasa de interes - anual o mensual
-# numero de periodos 
-
-# imprimir el total en aportes 
-# el total de interes se calcula cada mes y se suma para obtener este dato
-# total
-# una grafica 
-# opcional una tabla
+import sys
+import json
 
 separator = "-------------------------------"
 
@@ -24,7 +8,7 @@ values_user = list()
 def get_float_input(prompt_message):
     while True:
         try:
-            raw_input = input(prompt_message + ": ").strip()
+            raw_input = input(prompt_message).strip()
             if raw_input == "":
                 print(separator)
                 print("Ingrese un numero.")
@@ -88,7 +72,7 @@ def get_float_input(prompt_message):
                 # Un único separador (o ninguno): si es una coma asumimos decimal (ej: 1000,50)
                 elif commas == 1 and dots == 0:
                     part_after = raw.split('.')[-1]
-                     if len(part_after) == 3 and part_after.isdigit():
+                    if len(part_after) == 3 and part_after.isdigit():
                          sanitized = raw.replace(',', '')
                 # caso: un solo punto y ninguna coma -> puede ser decimal o miles (1000.50 o 1000)
                 # lo dejamos como está (float aceptará 1000.50). Si es "1.000" y significa 1000,
@@ -122,7 +106,7 @@ def get_int_input(prompt_message):
     while True:
         try:
             # 1. Obtener la entrada del usuario como una cadena de texto (str)
-            raw_input = input(prompt_message + ": ")
+            raw_input = input(prompt_message)
             
             # 2. Reemplazar comas por puntos (unificar el separador a punto)
             sanitized_input = raw_input.replace(",", ".")
@@ -151,15 +135,15 @@ def compund_interest():
 
     print(separator)
     
-    initial_capital = get_int_input("Ingrese el capital inicial")
+    initial_capital = get_int_input("Ingrese el capital inicial: ")
 
-    periodic_contribution = get_int_input("Contribucion mensual")
+    periodic_contribution = get_int_input("Contribucion mensual: ")
 
-    number_period = get_float_input("Cantidad de tiempo")
+    number_period = get_float_input("Cantidad de tiempo: ")
     # periodo de tiempo
     while True:
 
-        time_period = get_int_input("El tiempo esta en\n1: años\n2:meses\n")
+        time_period = get_int_input("El tiempo esta en\n1: años\n2: meses\n")
 
         if time_period == 1:
 
@@ -176,7 +160,7 @@ def compund_interest():
         else:
             print("El valor no es un numero")
 
-    nominal_annual_interest = get_float_input("Tasa de interes estimada: ") / 100
+    nominal_annual_interest = get_float_input("Tasa de interes estimada (%): ") / 100
 
     #fecuencia de capitalizacion
     while True:
@@ -227,9 +211,9 @@ def compund_interest():
     #total generado de interes
     total_interest = total_compound_interest - total_contributed
 
-    print(f"El total del ahorro en {number_period:.0f} es: {total_compound_interest}")
-    print(f"Total aportado: {total_contributed}")
-    print(f"El interes total generado ( - tus ahorros): {total_interest:.2f}")
+    # print(f"El total del ahorro en {number_period:.0f} es: {total_compound_interest}")
+    # print(f"Total aportado: {total_contributed}")
+    # print(f"El interes total generado ( - tus ahorros): {total_interest:.2f}")
     print(separator)
     print("Informacion detallada")
     detalied_info = {
@@ -239,43 +223,66 @@ def compund_interest():
         "Tasa de interes" : nominal_annual_interest,
         "Frecuencia de capitalizacion" : capitalization_frequency,
         "Total generado"  : total_compound_interest,
-        "Total ahorrado (inicial + regular)" : total_contributed,
-        "Total generado de intereses" : total_interest
+        "Total ahorrado (inicial + regular)" : round(total_contributed, 2),
+        "Total generado de intereses" : round(total_interest, 2)
     }
-    print(detalied_info)
+    print(json.dumps(detalied_info, indent=4) )
     print(separator)
-    save_value(total_compound_interest)
-    print_values_calculated()
     
-    if input("Desea calcular otro valor (s/n)") == "n":
-        return detalied_info
-    else:
-        return main()
-
-def save_value(value):
-    print("desea guardar el valor? 's/n'")
-    aswer = input("")
-    if answer == "s":
-        values_user.append(value)
-    elif answer == "n":
-        pass
-    else:
-        print("valor no esperado ingrese s/n")
-        save_value(value)
-
-def print_values_calculated():
-    answer = input("¿Desea ver los valores guardados? s/n: ")
-    if answer == "s":
-        print("\nValores guardados:")
-        for i, valor in enumerate(values_user, 1):
-            print(f"{i}: {valor}")
-    elif answer == "n":
-        pass
-    else:
-        print("Valor no esperado, ingrese s/n")
-        print_values_calculated()
+    return total_compound_interest
+    # print("Para salir Ctrl + C / exit")
+    # darle al usuario una opcion de salir 
+    # sys.exit
+  
+  
+  # describir lo que hace cada fun 
+def option_menu():
+    ultimo_valor = None
+    
+    while True:
+        print("\nMENU PRINCIPAL")
+        print(separator)
+        print("1. Calcular nuevo interes compuesto")
+        
+        if ultimo_valor is not None:
+            print("2. Guardar ultimo valor generado (" + str(ultimo_valor) + ")")
+        else:
+            print("2. Guardar (No disponible - Calcule primero)")
+            
+        print("3. Ver valores guardados")
+        print("4. Salir")
+        print(separator)
+        
+        opcion = input("Seleccione una opcion: ").strip()
+        
+        if opcion == "1":
+            ultimo_valor = compund_interest()
+            
+        elif opcion == "2":
+            if ultimo_valor is not None:
+                values_user.append(ultimo_valor)
+                print("Valor guardado correctamente.")
+                ultimo_valor = None # Reseteamos para no guardar el mismo dos veces
+            else:
+                print("Primero debe realizar un calculo (Opcion 1).")
+                
+        elif opcion == "3":
+            print("\nValores guardados:")
+            if not values_user:
+                print("No hay valores guardados.")
+            for i, valor in enumerate(values_user, 1):
+                print(f"{i}: {valor}")
+            input("Presione Enter para continuar...")
+            
+        elif opcion == "4":
+            print("Saliendo...")
+            sys.exit()
+            
+        else:
+            print("Opcion no valida.")
+                
 def main():
-    compund_interest()
+    option_menu()
 
 if __name__ == "__main__":
     main()
