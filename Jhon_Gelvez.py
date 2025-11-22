@@ -66,11 +66,13 @@ def compund_interest():
     print("Interes compuesto")
     print(separator)
 
-    # Textos mejorados para indicar al usuario cómo debe escribir números
+    # Capital y contribucion mensual
     initial_capital = get_int_input("Ingrese el capital inicial (solo números separados por punto): ")
     periodic_contribution = get_int_input("Contribucion mensual (solo números separados por punto): ")
 
+    # Tiempo
     while True:
+        # unidad
         while True:
             time_period = get_int_input(
                 "La unidad de tiempo sera\n"
@@ -78,32 +80,30 @@ def compund_interest():
                 "2: meses\n"
             )
             
-            if  time_period == 1 or  time_period == 2:
+            if  time_period in (1, 2):
                 break
             else:
-                # Si el número es válido (ej. 3) pero fuera de rango, muestra el error y repite el bucle INTERNO
                 print(separator)
-                print(f"¡Opción inválida! La unidad de tiempo debe ser 1 (años) o 2 (meses), no '{time_period}'.")
+                print(f"¡Opción inválida! Debe ser 1 o 2, no '{time_period}'.")
                 print(separator)
                 
         number_period = get_float_input("Cantidad de tiempo (puede usar 12, 12.5, 44.6): ")
-
         original_number_period = number_period
         
         if time_period == 1:
             time_unit_str = "años"
             break
-        elif time_period == 2:
+        else:
             number_period = number_period / 12
             time_unit_str = "meses"
             break
-        else:
-            print(f"El valor {time_period} no es un numero, ingrese 1 o 2")
 
+    # Interes
     nominal_annual_interest = get_float_input(
         "Tasa de interes estimada (%) (ej: 12, 12.5, 0.5): "
     ) / 100
 
+    # Frecuencia de capitalización
     while True:
         try:
             option_frecuency = int(input(
@@ -114,30 +114,29 @@ def compund_interest():
                 "4: mensualmente\n"
                 "5: diariamente\n"
             ))
-            
-            # definimos una variable para describir la frecuencia
+
             frequency_name = ""
             
             match option_frecuency:
                 case 1: 
                     capitalization_frequency = 1
-                    frequency_name = "1 vez al año (Anual)" # LOG MEJORADO
+                    frequency_name = "1 vez al año (Anual)"
                     break
                 case 2: 
                     capitalization_frequency = 2
-                    frequency_name = "2 veces al año (Semestral)" # LOG MEJORADO
+                    frequency_name = "2 veces al año (Semestral)"
                     break
                 case 3: 
                     capitalization_frequency = 4
-                    frequency_name = "4 veces al año (Trimestral)" # LOG MEJORADO
+                    frequency_name = "4 veces al año (Trimestral)"
                     break
                 case 4: 
                     capitalization_frequency = 12
-                    frequency_name = "12 veces al año (Mensual)" # LOG MEJORADO
+                    frequency_name = "12 veces al año (Mensual)"
                     break
                 case 5: 
                     capitalization_frequency = 365
-                    frequency_name = "365 veces al año (Diaria)" # LOG MEJORADO
+                    frequency_name = "365 veces al año (Diaria)"
                     break
                 case _:
                     print(separator)
@@ -146,24 +145,39 @@ def compund_interest():
         except ValueError:
             print("Valor invalido. Ingrese un numero")
 
+    # Tasa por periodo
     rate_per_period = nominal_annual_interest / capitalization_frequency
-    periods = capitalization_frequency * number_period
 
-    future_amount_of_initial_capitalization = initial_capital * ((1 + rate_per_period) ** periods)
+    # Periodos de capitalización (interés)
+    periods_interest = capitalization_frequency * number_period
 
+    # Convertir aporte mensual → aporte por periodo de capitalización
+    # Son dos valores independientes que debe normalizarse a los periodos
+    # Aporte mensual * (12 / capitalizaciones_por_año)
+    contribution_per_period = periodic_contribution * (12 / capitalization_frequency)
+
+    # Capital inicial compuesto
+    future_initial = initial_capital * ((1 + rate_per_period) ** periods_interest)
+
+    # Fondo acumulado por aportes periódicos (aportes periódicos + sus intereses)
     if rate_per_period == 0:
-        future_amount_of_regular_capitalization = periodic_contribution * periods
+        future_contributions = contribution_per_period * periods_interest
     else:
-        future_amount_of_regular_capitalization = periodic_contribution * (
-            ((1 + rate_per_period) ** periods - 1)
-        ) / rate_per_period
+        future_contributions = contribution_per_period * (
+            ((1 + rate_per_period)**periods_interest - 1) / rate_per_period
+        )
 
-    total = future_amount_of_initial_capitalization + future_amount_of_regular_capitalization
+    # Total final
+    total = future_initial + future_contributions
     total_compound_interest = round(total, 2)
 
-    total_contributed = periodic_contribution * periods + initial_capital
-    total_interest = total_compound_interest - total_contributed
+    # Total aportado 
+    total_contributed = initial_capital + (periodic_contribution * (number_period * 12))
 
+    # Intereses reales generados
+    total_interest = round(total_compound_interest - total_contributed, 2)
+
+    # Output
     print(separator)
     print("Informacion detallada")
     detalied_info = {
@@ -173,14 +187,13 @@ def compund_interest():
         "Tasa de interes": f"{nominal_annual_interest * 100}%",
         "Frecuencia de capitalizacion": frequency_name,
         "Total ahorrado (inicial + regular)": round(total_contributed, 2),
-        "Total generado de intereses": round(total_interest, 2),
+        "Total generado de intereses": total_interest,
         "Total generado": total_compound_interest
     }
     print(json.dumps(detalied_info, indent=4, ensure_ascii=False))
     print(separator)
 
     return total_compound_interest
-
 
 # -----------------------------------------------------------
 # Función: option_menu
