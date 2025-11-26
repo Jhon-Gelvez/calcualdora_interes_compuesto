@@ -42,11 +42,11 @@ def get_float_input(prompt_message: str):
         try:
             # 1. Limpiar separador de miles (PUNTO)
             # Ejemplo: '1.000.000,50' -> '1000000,50'
-            clean_input = user_input.replace(".", "")
+            # clean_input = user_input.replace(".", "")
             
             # 2. Reemplazar separador decimal regional (COMA) por el estándar de Python (PUNTO)
             # Ejemplo: '1000000,50' -> '1000000.50'
-            clean_input = clean_input.replace(",", ".")
+            clean_input = user_input.replace(",", ".")
             
             # 3. Intentar convertir a float
             number = float(clean_input)
