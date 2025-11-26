@@ -27,9 +27,3 @@ Si necesitas hacer cálculos de interés compuesto con frecuencia, o simplemente
 ¿Para quién es útil?
 
 Personas que ahorran o invierten y quieren entender el crecimiento de su dinero.
-
-Estudiantes que necesitan practicar o ver resultados reales.
-
-Desarrolladores o usuarios que prefieren trabajar en terminal.
-
-Cualquiera que quiera una calculadora clara, rápida y confiable.
